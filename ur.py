@@ -1,0 +1,197 @@
+#################################################
+# Python implementation of the Royal Game of Ur #
+#################################################
+
+###########
+# Imports #
+###########
+import numpy as np
+import random
+import os
+
+###############
+# Board class #
+###############
+class board:
+    #Constructor building the board
+    def __init__(self, STARTING_PLAYER = "B", NUMBER_OF_TOKENS = 4, NUMBER_OF_DICES = 4):
+                #" "/0 - Empty tile, "B"/1 - Black tile, "R"/2 - Red tile
+        self.tile_type = [" ", "B", "R"]
+        #0-3 - black player home path #4-7 - red player home path #8-15 - middle path #16-17 black player finish path #18-19 red player finish path
+        self.board_tiles = 20 * [self.tile_type[0]]
+        #Set the paths indexes
+        self.black_path_indexes = [0, 1, 2, 3, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+        self.red_path_indexes = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 18, 19]
+        #Set the starting player
+        self.current_player = STARTING_PLAYER
+        #Set the number of tokens
+        self.starting_tokens = NUMBER_OF_TOKENS
+        self.black_tokens_in_home = NUMBER_OF_TOKENS
+        self.red_tokens_in_home = NUMBER_OF_TOKENS
+        self.black_tokens_finished = 0
+        self.red_tokens_finished = 0
+        #Dices result and their number
+        self.number_of_dices = NUMBER_OF_DICES
+        self.dices_result = 0
+
+    
+    #Board as a string
+    def __str__(self) -> str:
+        board_string = ""
+        for i in range(4):
+            board_string += "[" + self.board_tiles[3 - i] + "]" + "[" + self.board_tiles[8 + i] + "]" + "[" + self.board_tiles[7 - i] + "]\n"
+        for i in range(2):
+            board_string += "   [" + self.board_tiles[12 + i] + "]\n"
+        for i in range(2):
+            board_string += "[" + self.board_tiles[17 - i] + "]" + "[" + self.board_tiles[14 + i] + "]" + "[" + self.board_tiles[19 - i] + "]\n"
+        return board_string
+    
+    #This function rolls the all the dices, each dice can roll 1 or 0 (50/50)
+    def roll(self):
+        self.dices_result = 0
+        for i in range(self.number_of_dices):
+            self.dices_result += random.randint(0, 1)
+    
+    #This function changes the current player
+    def change_player(self):
+        if self.current_player == self.tile_type[1]:
+            self.current_player = self.tile_type[2]
+        elif self.current_player == self.tile_type[2]:
+            self.current_player = self.tile_type[1]
+    
+    #This function returns the player who has won or None if no one has won yet
+    def check_for_winner(self):
+        if self.black_tokens_finished == self.starting_tokens:
+            return self.tile_type[1]
+        elif self.red_tokens_finished == self.starting_tokens:
+            return self.tile_type[2]
+        return None
+    
+    #This function returns the player who waits for his turn
+    def get_oposite_player(self):
+        if self.current_player == self.tile_type[1]:
+            return self.tile_type[2]
+        elif self.current_player == self.tile_type[2]:
+            return self.tile_type[1]
+        
+    #This function puts a token on the board and switches turn
+    def put_token_on_board(self):
+        #Account for the indexes of the arrays
+        steps = self.dices_result - 1
+        #Black player
+        if self.current_player == self.tile_type[1]:
+            if self.black_tokens_in_home < 0:
+                return False
+            if self.board_tiles[steps] == self.tile_type[1]:
+                return False
+            self.board_tiles[steps] = self.tile_type[1]
+            self.black_tokens_in_home -= 1
+            self.change_player()
+            return True
+        #Red player
+        elif self.current_player == self.tile_type[2]:
+            if self.red_tokens_in_home < 0:
+                return False
+            if self.board_tiles[steps + 4] == self.tile_type[2]:
+                return False
+            self.board_tiles[steps + 4] = self.tile_type[2]
+            self.red_tokens_in_home -= 1
+            self.change_player()
+            return True
+
+    #This function moves the token on the board, checks for collisions and switches turn
+    def move(self, token):
+        #If move is equal to 0, put token on the board
+        if token == 0:
+            return self.put_token_on_board()
+        
+        #Check if the chosen token exists
+        token -= 1
+        if token > np.count_nonzero(np.asarray(self.board_tiles) == self.current_player) or token < 1:
+            return False
+        
+        #Select the index of the chosen token
+        token_index = np.where(np.asarray(self.board_tiles) == self.current_player)[0][token - 1]
+        
+        #Check if token is finishing the path
+        if self.current_player == self.tile_type[1]:
+            if token_index + self.dices_result > 18:
+                return False
+            elif token_index + self.dices_result == 18:
+                self.black_tokens_finished += 1
+                self.board_tiles[token_index] = self.tile_type[0]
+                self.change_player()
+                return True
+        elif self.current_player == self.tile_type[2]:
+            if token_index + self.dices_result > 20:
+                return False
+            elif token_index + self.dices_result == 20:
+                self.red_tokens_finished += 1
+                self.board_tiles[token_index] = self.tile_type[0]
+                self.change_player()
+                return True
+            
+        #Check for collisions and move the token if possible
+        if self.current_player == self.tile_type[1]:
+            if token_index + self.dices_result > 3 and token_index + self.dices_result < 8:
+                self.dices_result += 4
+            #When there is a black token on tha tile
+            if self.board_tiles[token_index + self.dices_result] == self.tile_type[1]:
+                return False
+            #When there is a red token on the tile
+            elif self.board_tiles[token_index + self.dices_result] == self.tile_type[2]:
+                self.board_tiles[token_index + self.dices_result] = self.current_player
+                self.board_tiles[token_index] = self.tile_type[0]
+                self.red_tokens_in_home += 1
+                self.change_player()
+                return True
+            #When there is no token on the tile
+            else:
+                self.board_tiles[token_index + self.dices_result] = self.current_player
+                self.board_tiles[token_index] = self.tile_type[0]
+                self.change_player()
+                return True
+        elif self.current_player == self.tile_type[2]:
+            if token_index + self.dices_result > 15 and token_index + self.dices_result < 18:
+                self.dices_result += 2
+            #When there is a black token on the tile
+            if self.board_tiles[token_index + self.dices_result] == self.tile_type[1]:
+                self.board_tiles[token_index + self.dices_result] = self.current_player
+                self.board_tiles[token_index] = self.tile_type[0]
+                self.black_tokens_in_home += 1
+                self.change_player()
+                return True
+            #When there is a red token on the tile
+            elif self.board_tiles[token_index + self.dices_result] == self.tile_type[2]:
+                return False
+            #When there is no token on the tile
+            else:
+                self.board_tiles[token_index + self.dices_result] = self.current_player
+                self.board_tiles[token_index] = self.tile_type[0]
+                self.change_player()
+                return True
+
+#################
+# Main function #
+#################
+if __name__ == '__main__':
+    b = board()
+    
+    while True:
+        os.system('cls')
+        print ("Current player: " + b.current_player)
+        print(b)
+        print("Press any key to roll the dices")
+        input()
+        b.roll()
+        print("Rolled " + str(b.dices_result))
+        
+        while True:
+            try:
+                 move = int(input("Your move: "))
+                 if b.move(move):
+                     break
+                 else:
+                     print("Wrong move: ")
+            except ValueError:
+                print("Wrong input, please try again")
