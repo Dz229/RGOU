@@ -8,6 +8,8 @@
 import numpy as np
 import random
 import os
+import copy
+from sys import platform
 
 ###############
 # Board class #
@@ -33,7 +35,6 @@ class board:
         #Dices result and their number
         self.number_of_dices = NUMBER_OF_DICES
         self.dices_result = 0
-
     
     #Board as a string
     def __str__(self) -> str:
@@ -51,6 +52,8 @@ class board:
         self.dices_result = 0
         for i in range(self.number_of_dices):
             self.dices_result += random.randint(0, 1)
+        if self.dices_result == 0:
+            self.change_player()
     
     #This function changes the current player
     def change_player(self):
@@ -80,7 +83,7 @@ class board:
         steps = self.dices_result - 1
         #Black player
         if self.current_player == self.tile_type[1]:
-            if self.black_tokens_in_home < 0:
+            if self.black_tokens_in_home < 1:
                 return False
             if self.board_tiles[steps] == self.tile_type[1]:
                 return False
@@ -90,7 +93,7 @@ class board:
             return True
         #Red player
         elif self.current_player == self.tile_type[2]:
-            if self.red_tokens_in_home < 0:
+            if self.red_tokens_in_home < 1:
                 return False
             if self.board_tiles[steps + 4] == self.tile_type[2]:
                 return False
@@ -106,7 +109,6 @@ class board:
             return self.put_token_on_board()
         
         #Check if the chosen token exists
-        token -= 1
         if token > np.count_nonzero(np.asarray(self.board_tiles) == self.current_player) or token < 1:
             return False
         
@@ -171,21 +173,44 @@ class board:
                 self.change_player()
                 return True
 
+    #This function returns the list of possible moves for the current player 
+    def get_moves(self):
+        possible_moves = []
+        for move in [0, 1, 2, 3, 4]:
+            if copy.deepcopy(self).move(move):
+                possible_moves.append(move)
+        return possible_moves
+            
+
 #################
 # Main function #
 #################
 if __name__ == '__main__':
+    # Create board
     b = board()
     
+    # Main loop
     while True:
-        os.system('cls')
+        # Check for system to clear console
+        if platform == "linux" or platform == "linux2":
+            os.system('clear')
+        elif platform == "win32":
+            os.system('cls')
+
+        # Print and input
         print ("Current player: " + b.current_player)
         print(b)
         print("Press any key to roll the dices")
         input()
         b.roll()
         print("Rolled " + str(b.dices_result))
+        print("Possible moves: " + str(b.get_moves()))
+
+        # If rolled 0, skip move
+        if b.dices_result == 0:
+            continue
         
+        # Make move
         while True:
             try:
                  move = int(input("Your move: "))
