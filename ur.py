@@ -9,6 +9,7 @@ import numpy as np
 import random
 import os
 import copy
+import time
 from sys import platform
 
 ###############
@@ -125,6 +126,8 @@ class board:
                 self.change_player()
                 return True
         elif self.current_player == self.tile_type[2]:
+            if token_index < 16 and token_index + self.dices_result > 15:
+                self.dices_result += 2
             if token_index + self.dices_result > 20:
                 return False
             elif token_index + self.dices_result == 20:
@@ -135,7 +138,7 @@ class board:
             
         #Check for collisions and move the token if possible
         if self.current_player == self.tile_type[1]:
-            if token_index + self.dices_result > 3 and token_index + self.dices_result < 8:
+            if token_index < 4 and token_index + self.dices_result > 3:
                 self.dices_result += 4
             #When there is a black token on tha tile
             if self.board_tiles[token_index + self.dices_result] == self.tile_type[1]:
@@ -154,8 +157,8 @@ class board:
                 self.change_player()
                 return True
         elif self.current_player == self.tile_type[2]:
-            if token_index + self.dices_result > 15 and token_index + self.dices_result < 18:
-                self.dices_result += 2
+            # if token_index < 16 and token_index + self.dices_result > 15:
+            #     self.dices_result += 2
             #When there is a black token on the tile
             if self.board_tiles[token_index + self.dices_result] == self.tile_type[1]:
                 self.board_tiles[token_index + self.dices_result] = self.current_player
@@ -179,6 +182,8 @@ class board:
         for move in [0, 1, 2, 3, 4]:
             if copy.deepcopy(self).move(move):
                 possible_moves.append(move)
+        if possible_moves == []:
+            self.change_player()
         return possible_moves
             
 
@@ -189,34 +194,54 @@ if __name__ == '__main__':
     # Create board
     b = board()
     
+    # Check for system
+    clear_command = ''
+    if platform == "linux" or platform == "linux2":
+        clear_command = 'clear'
+    elif platform == "win32":
+        clear_command = 'cls'
+
+
     # Main loop
     while True:
-        # Check for system to clear console
-        if platform == "linux" or platform == "linux2":
-            os.system('clear')
-        elif platform == "win32":
-            os.system('cls')
+        time.sleep(0.25)
+        # Clear console
+        #os.system(clear_command)
 
         # Print and input
+        print ("Player B home:     " + str(b.black_tokens_in_home) + "   Player R home:     " + str(b.red_tokens_in_home))
+        print ("Player B finished: " + str(b.black_tokens_finished) +"   Player R finished: " + str(b.red_tokens_finished))
         print ("Current player: " + b.current_player)
         print(b)
         print("Press any key to roll the dices")
-        input()
+        #input()
         b.roll()
         print("Rolled " + str(b.dices_result))
-        print("Possible moves: " + str(b.get_moves()))
 
         # If rolled 0, skip move
         if b.dices_result == 0:
             continue
+
+        # Check for possible moves
+        possible_moves = b.get_moves()
+        if possible_moves == []:
+            continue
+        print("Possible moves: " + str(possible_moves))
         
         # Make move
         while True:
             try:
-                 move = int(input("Your move: "))
+                 #move = int(input("Your move: "))
+                 move = max(possible_moves)
                  if b.move(move):
                      break
                  else:
                      print("Wrong move: ")
             except ValueError:
                 print("Wrong input, please try again")
+        
+        # Check for winner
+        if b.check_for_winner() != None:
+            print(str(b.check_for_winner()) + " has won!")
+            print(b)
+            break
