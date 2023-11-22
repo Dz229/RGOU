@@ -11,6 +11,7 @@ import os
 import copy
 import time
 from sys import platform
+from ur_heuristic import calculate
 
 ###############
 # Board class #
@@ -212,6 +213,7 @@ if __name__ == '__main__':
         print ("Player B home:     " + str(b.black_tokens_in_home) + "   Player R home:     " + str(b.red_tokens_in_home))
         print ("Player B finished: " + str(b.black_tokens_finished) +"   Player R finished: " + str(b.red_tokens_finished))
         print ("Current player: " + b.current_player)
+        print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))        
         print(b)
         print("Press any key to roll the dices")
         #input()
@@ -244,4 +246,5 @@ if __name__ == '__main__':
         if b.check_for_winner() != None:
             print(str(b.check_for_winner()) + " has won!")
             print(b)
+            print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))
             break
