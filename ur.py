@@ -12,6 +12,7 @@ import copy
 import time
 from sys import platform
 from ur_heuristic import calculate
+from expectiminimax import EMM
 
 ###############
 # Board class #
@@ -183,8 +184,6 @@ class board:
         for move in [0, 1, 2, 3, 4]:
             if copy.deepcopy(self).move(move):
                 possible_moves.append(move)
-        if possible_moves == []:
-            self.change_player()
         return possible_moves
             
 
@@ -205,9 +204,9 @@ if __name__ == '__main__':
 
     # Main loop
     while True:
-        time.sleep(0.25)
+        #time.sleep(0.25)
         # Clear console
-        #os.system(clear_command)
+        os.system(clear_command)
 
         # Print and input
         print ("Player B home:     " + str(b.black_tokens_in_home) + "   Player R home:     " + str(b.red_tokens_in_home))
@@ -216,25 +215,24 @@ if __name__ == '__main__':
         print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))        
         print(b)
         print("Press any key to roll the dices")
-        #input()
+        input()
         b.roll()
         print("Rolled " + str(b.dices_result))
-
-        # If rolled 0, skip move
-        if b.dices_result == 0:
-            continue
 
         # Check for possible moves
         possible_moves = b.get_moves()
         if possible_moves == []:
+            b.change_player()
             continue
         print("Possible moves: " + str(possible_moves))
         
         # Make move
         while True:
+             # If rolled 0, skip move
+            if b.dices_result == 0:
+                break
             try:
-                 #move = int(input("Your move: "))
-                 move = max(possible_moves)
+                 move = int(input("Your move: "))
                  if b.move(move):
                      break
                  else:
@@ -248,3 +246,22 @@ if __name__ == '__main__':
             print(b)
             print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))
             break
+        
+        #Computer turn
+        b.roll()
+        if b.dices_result == 0:
+            continue
+        print("================================================================")
+        print("Computer has rolled: " + str(b.dices_result))
+        computer_move = EMM(copy.deepcopy(b), 4)
+        print("Computer move: " + str(computer_move))
+        print("================================================================")
+        b.move(computer_move)
+        
+        # Check for winner
+        if b.check_for_winner() != None:
+            print(str(b.check_for_winner()) + " has won!")
+            print(b)
+            print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))
+            break
+        
