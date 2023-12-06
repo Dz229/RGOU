@@ -48,43 +48,45 @@ def EMM (board, depth):
             best_move = move
     
     # Return best move
+    if best_move not in possible_moves:
+        return possible_moves[0]
     return best_move
     
 def EMM_ALG(board, depth):
-    # Chances of diffrent rolls
-    chances = [1/16, 4/16, 6/16, 4/16, 1/16]
-    
-    # If node is a leaf, return the value
-    if depth == 0:
-        return calculate(board.board_tiles, board.black_tokens_in_home, board.red_tokens_in_home, board.black_tokens_finished, board.red_tokens_finished, board.starting_tokens)
-    
-    # Get the possible moves
-    possible_moves = board.get_moves()
-    
-    # Max player
-    if board.current_player == "B":
-        children_values = []
-        for move in possible_moves:
-            child = copy.deepcopy(board)
-            child.move(move)
-            child_value = chances[move] * EMM_ALG(child, depth-1)
-            children_values.append(child_value)
-        try:
+    try:
+        # Chances of diffrent rolls
+        chances = [1/16, 4/16, 6/16, 4/16, 1/16]
+        
+        # If node is a leaf, return the value
+        if depth == 0:
+            return calculate(board.board_tiles, board.black_tokens_in_home, board.red_tokens_in_home, board.black_tokens_finished, board.red_tokens_finished, board.starting_tokens)
+        
+        # Get the possible moves
+        possible_moves = board.get_moves()
+        
+        # Max player
+        if board.current_player == "B":
+            children_values = []
+            for move in possible_moves:
+                child = copy.deepcopy(board)
+                child.move(move)
+                child_value = chances[move] * EMM_ALG(child, depth-1)
+                children_values.append(child_value)
             return max(children_values)
-        except Exception:
-            return 0
-    # Min player
-    else:
-        children_values = []
-        for move in possible_moves:
-            child = copy.deepcopy(board)
-            child.move(move)
-            child_value = chances[move] * EMM_ALG(child, depth-1)
-            children_values.append(child_value)
-        try:
+
+        # Min player
+        else:
+            children_values = []
+            for move in possible_moves:
+                child = copy.deepcopy(board)
+                child.move(move)
+                child_value = chances[move] * EMM_ALG(child, depth-1)
+                children_values.append(child_value)
             return min(children_values)
-        except Exception:
-            return 0
+
+    except Exception:
+        print(Exception)
+        return 0
 
 
 # def EMM(b, depth, chance_node = False, original_board = True):

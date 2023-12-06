@@ -206,7 +206,7 @@ if __name__ == '__main__':
     while True:
         #time.sleep(0.25)
         # Clear console
-        os.system(clear_command)
+        # os.system(clear_command)
 
         # Print and input
         print ("Player B home:     " + str(b.black_tokens_in_home) + "   Player R home:     " + str(b.red_tokens_in_home))
