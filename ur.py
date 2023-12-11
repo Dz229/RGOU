@@ -249,8 +249,21 @@ if __name__ == '__main__':
         
         #Computer turn
         b.roll()
-        if b.dices_result == 0:
+        if b.dices_result == 0: 
+            print("================================================================")
+            print("Computer rolled 0, skiping turn...")
+            print("================================================================")
             continue
+
+        # Check for possible moves
+        possible_moves = b.get_moves()
+        if possible_moves == []:
+            b.change_player()
+            print("================================================================")
+            print("Computer has no possible moves, skiping turn...")
+            print("================================================================")
+            continue
+
         print("================================================================")
         print("Computer has rolled: " + str(b.dices_result))
         computer_move = EMM(copy.deepcopy(b), 4)
