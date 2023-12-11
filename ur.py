@@ -220,25 +220,27 @@ if __name__ == '__main__':
         print("Rolled " + str(b.dices_result))
 
         # Check for possible moves
-        possible_moves = b.get_moves()
-        if possible_moves == []:
-            b.change_player()
-            continue
-        print("Possible moves: " + str(possible_moves))
+        if b.dices_result != 0:
+            no_moves = False
+            possible_moves = b.get_moves()
+            if possible_moves == []:
+                b.change_player()
+                no_moves = True
+            print("Possible moves: " + str(possible_moves))
         
         # Make move
-        while True:
-             # If rolled 0, skip move
-            if b.dices_result == 0:
-                break
-            try:
-                 move = int(input("Your move: "))
-                 if b.move(move):
-                     break
-                 else:
-                     print("Wrong move: ")
-            except ValueError:
-                print("Wrong input, please try again")
+        if b.dices_result !=0 and no_moves == False:
+            while True:
+                try:
+                    move = int(input("Your move: "))
+                    if b.move(move):
+                        break
+                    else:
+                        print("Wrong move: ")
+                except ValueError:
+                    print("Wrong input, please try again")
+        else:
+            print("Skipping to cpomputers turn...")
         
         # Check for winner
         if b.check_for_winner() != None:
@@ -266,7 +268,7 @@ if __name__ == '__main__':
 
         print("================================================================")
         print("Computer has rolled: " + str(b.dices_result))
-        computer_move = EMM(copy.deepcopy(b), 4)
+        computer_move = EMM(copy.deepcopy(b), 6)
         print("Computer move: " + str(computer_move))
         print("================================================================")
         b.move(computer_move)

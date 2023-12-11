@@ -6,9 +6,9 @@
 MAX_PLAYER = "B"
 
 #Heuristic values - subject to potential change
-HOME_VALUE = 0
-FINISH_VALUE = 1000
-SINGLE_STEP_VALUE = 2
+HOME_VALUE = -50
+FINISH_VALUE = 10000
+SINGLE_STEP_VALUE = 1
 
 #This function takes the board list (board_tiles from ur board implementation) and information on tokens that are not on the boad and then returns the value of the board
 def calculate(board, black_tokens_in_home, red_tokens_in_home, black_tokens_finished, red_tokens_finished, starting_tokens):
@@ -29,21 +29,21 @@ def calculate(board, black_tokens_in_home, red_tokens_in_home, black_tokens_fini
     #Home paths
     for i in range (4):
         if board[i] == "B":
-            value += (i+1) * SINGLE_STEP_VALUE + i ** 2
+            value += (i+1) * SINGLE_STEP_VALUE + (i ** 2)
         if board[i+4] == "R":
-            value -= (i+1) * SINGLE_STEP_VALUE + i ** 2
+            value -= (i+1) * SINGLE_STEP_VALUE + (i ** 2)
     #Sared path
     for i in range (8):
         if board[i+8] == "B":
-            value += 4 + (i+1) * SINGLE_STEP_VALUE + i ** 2
+            value += (i+5) * SINGLE_STEP_VALUE + ((i+8) ** 2)
         if board[i+8] == "R":
-            value -= 4 + (i+1) * SINGLE_STEP_VALUE + i ** 2
+            value -= (i+5) * SINGLE_STEP_VALUE + ((i+8) ** 2)
     #Finish paths
     for i in range (2):
         if board[i+16] == "B":
-            value += 12 + (i+1) * SINGLE_STEP_VALUE + i ** 2
+            value += (i+13) * SINGLE_STEP_VALUE + ((i+13) ** 2)
         if board[i+18] == "R":
-            value -= 12 + (i+1) * SINGLE_STEP_VALUE + i ** 2       
+            value -= (i+13) * SINGLE_STEP_VALUE + ((i+13) ** 2)       
 
     return maxing_player_case(value)
 
