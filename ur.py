@@ -268,7 +268,7 @@ if __name__ == '__main__':
 
         print("================================================================")
         print("Computer has rolled: " + str(b.dices_result))
-        computer_move = EMM(copy.deepcopy(b), 6)
+        computer_move = EMM(copy.deepcopy(b), 4)
         print("Computer move: " + str(computer_move))
         print("================================================================")
         b.move(computer_move)
@@ -279,4 +279,3 @@ if __name__ == '__main__':
             print(b)
             print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))
             break
-        

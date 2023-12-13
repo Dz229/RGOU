@@ -6,10 +6,17 @@
 MAX_PLAYER = "B"
 
 #Heuristic values - subject to potential change
-HOME_VALUE = 0
-FINISH_VALUE = 10000
-SINGLE_STEP_VALUE = 1
+HOME_VALUE         = 0
+FINISH_VALUE       = 10000
+SINGLE_STEP_VALUE  = 1
 ENEMY_TOKENS_VALUE = 100 
+
+#Set the values of heuristic 
+def set_values(home, finish, single, enemy):
+    HOME_VALUE         = home
+    FINISH_VALUE       = finish
+    SINGLE_STEP_VALUE  = single
+    ENEMY_TOKENS_VALUE = enemy
 
 #This function takes the board list (board_tiles from ur board implementation) and information on tokens that are not on the boad and then returns the value of the board
 def calculate(board, black_tokens_in_home, red_tokens_in_home, black_tokens_finished, red_tokens_finished, starting_tokens):
