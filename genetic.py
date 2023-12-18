@@ -1,0 +1,125 @@
+from ur import board
+import ur_heuristic
+from expectiminimax import EMM
+import random
+import copy
+
+# Constants
+POPULATION_SIZE = 1024
+GENERATIONS = 50
+MUTATION_RATE = 0.1
+
+# Initialize the population
+def initialize_population():
+    return [[0, 100, 1, 10, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]] for _ in range(POPULATION_SIZE)]
+
+# Play the game
+def play(black_values, red_values):
+    b = board()
+    # Main loop
+    while True:
+
+        #Black player turn
+        can_move = True
+        ur_heuristic.set_values(black_values[0], black_values[1], black_values[2], black_values[3], black_values[4])
+        b.roll()
+        if b.dices_result == 0: 
+            can_move = False
+        possible_moves = b.get_moves()
+        if possible_moves == []:
+            b.change_player()
+            can_move = False
+        if can_move:
+            computer_move = EMM(copy.deepcopy(b), 4)
+            b.move(computer_move)
+        if b.check_for_winner() != None:
+            break
+        
+        #Red player turn
+        ur_heuristic.set_values(red_values[0], red_values[1], red_values[2], red_values[3], red_values[4])
+        b.roll()
+        if b.dices_result == 0: 
+            continue
+        possible_moves = b.get_moves()
+        if possible_moves == []:
+            b.change_player()
+            continue
+        computer_move = EMM(copy.deepcopy(b), 4)
+        b.move(computer_move)
+        if b.check_for_winner() != None:
+            break
+        
+    if b.check_for_winner() == "B":
+        return black_values
+    else:
+        return red_values
+
+# Mutate function
+def mutate(current_population):
+    for individual in current_population:
+        # Mutating HOME_VALUE, FINISH_VALUE, and SINGLE_STEP_VALUE
+        if random.random() < MUTATION_RATE:
+            individual[0] += random.uniform(-1, 1)  # HOME_VALUE mutation
+            individual[0] = max(0, individual[0])   # Ensure HOME_VALUE is non-negative
+
+        if random.random() < MUTATION_RATE:
+            individual[1] += random.uniform(-10, 10)  # FINISH_VALUE mutation
+            individual[1] = max(0, individual[1])     # Ensure FINISH_VALUE is non-negative
+
+        if random.random() < MUTATION_RATE:
+            individual[2] += random.uniform(-0.5, 0.5)  # SINGLE_STEP_VALUE mutation
+            individual[2] = max(0, individual[2])       # Ensure SINGLE_STEP_VALUE is non-negative
+
+        # Mutating ENEMY_TOKENS_VALUE
+        if random.random() < MUTATION_RATE:
+            individual[3] += random.uniform(-5, 5)  # ENEMY_TOKENS_VALUE mutation
+            individual[3] = max(0, individual[3])   # Ensure ENEMY_TOKENS_VALUE is non-negative
+
+        # Mutating BOARD_VALUES
+        for j in range(len(individual[4])):
+            if random.random() < MUTATION_RATE:
+                individual[4][j] += random.uniform(-1, 1)  # BOARD_VALUES mutation
+                individual[4][j] = max(0, individual[4][j]) # Ensure BOARD_VALUES are non-negative
+
+    return current_population
+
+
+# Genetic Algorithm
+def genetic_algorithm():
+    population = initialize_population()
+
+    for generation in range(GENERATIONS):
+        print(f"Generation: {generation}/{GENERATIONS}")
+
+        # Play games to determine fitness
+        fitness_scores = []
+        for i in range(0, len(population), 2):
+            print(f"|-Fitness: {i}/{len(population)}")
+            winner = play(population[i], population[i+1])
+            fitness_scores.append((winner, 1))  # Winner gets a score
+
+        # Sort by fitness and select the best half of the population
+        population = [x for x, _ in sorted(fitness_scores, key=lambda x: x[1], reverse=True)][:POPULATION_SIZE//2]
+
+        # Ensure population size remains constant
+        while len(population) < POPULATION_SIZE:
+            population.append(random.choice(population))  # Randomly duplicate existing members
+
+
+        # Crossover (naive approach: pair-wise swap)
+        new_population = []
+        for i in range(0, len(population), 2):
+            print(f"|-Crossover: {i}/{len(population)}")
+            crossover_point = random.randint(1, len(population[i]) - 1)
+            child1 = population[i][:crossover_point] + population[i+1][crossover_point:]
+            child2 = population[i+1][:crossover_point] + population[i][crossover_point:]
+            new_population.extend([child1, child2])
+
+        # Mutate the new population
+        population = mutate(new_population)
+
+    return population
+
+# Run the genetic algorithm
+best_population = genetic_algorithm()
+print("Best heuristic values:", best_population[0])

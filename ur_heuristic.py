@@ -6,11 +6,30 @@
 MAX_PLAYER = "B"
 
 #Heuristic values - subject to potential change
-HOME_VALUE         = 0
-FINISH_VALUE       = 1000
-SINGLE_STEP_VALUE  = 1
-ENEMY_TOKENS_VALUE = 100 
-BOARD_VALUES       = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+# HOME_VALUE         = 0
+# FINISH_VALUE       = 1000
+# SINGLE_STEP_VALUE  = 1
+# ENEMY_TOKENS_VALUE = 100 
+# BOARD_VALUES       = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+
+HOME_VALUE         = 0.6726843026023939
+FINISH_VALUE       = 103.08914492041535
+SINGLE_STEP_VALUE  = 1.0113670334037483
+ENEMY_TOKENS_VALUE = 10.654944809938767 
+BOARD_VALUES       = [0.6868191429562505, 
+                      10.154008665256024, 
+                      3.0317251385188437, 
+                      2.212090128415566, 
+                      8.008207592698827, 
+                      7.006363329242039, 
+                      17.33475748602624, 
+                      2.3116018002746888, 
+                      6.994251582941695, 
+                      8.229741066809167, 
+                      7.219630454917789, 
+                      4.022913777851635, 
+                      0.5786720428965897, 
+                      13.64041572697466]
 
 #Set the values of heuristic 
 def set_values(home, finish, single, enemy, board_val):
