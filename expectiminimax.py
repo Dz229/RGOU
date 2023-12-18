@@ -39,7 +39,7 @@ def EMM (board, depth):
     
     # When there is depth
     for move in possible_moves:
-        print(board.current_player)
+        #print(board.current_player)
         child = copy.deepcopy(board)
         child.move(move)
         child_value = chance_node(child, depth-1)
@@ -49,7 +49,7 @@ def EMM (board, depth):
         elif (child_value < best_child_value) and board.current_player == "R":
             best_child_value = child_value
             best_move = move
-        print(f"Move {move}: {child_value}")
+        #print(f"Move {move}: {child_value}")
     
     # Return best move
     if best_move not in possible_moves:
@@ -62,8 +62,11 @@ def chance_node(board, depth):
     rolls   = [0, 1, 2, 3, 4]
     for roll in rolls:
         child = copy.deepcopy(board)
-        child.dices_result = roll
-        value += chances[roll] * EMM_ALG(child, depth, roll)
+        child.dices_result = rolls
+        try:
+            value += chances[roll] * EMM_ALG(child, depth, roll)
+        except Exception:
+            value = EMM_ALG(child, depth, roll)
     return value
 
 def EMM_ALG(board, depth, roll):

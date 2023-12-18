@@ -7,7 +7,7 @@ MAX_PLAYER = "B"
 
 #Heuristic values - subject to potential change
 HOME_VALUE         = 0
-FINISH_VALUE       = 10000
+FINISH_VALUE       = 1000
 SINGLE_STEP_VALUE  = 1
 ENEMY_TOKENS_VALUE = 100 
 BOARD_VALUES       = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
@@ -39,21 +39,21 @@ def calculate(board, black_tokens_in_home, red_tokens_in_home, black_tokens_fini
     #Home paths
     for i in range (4):
         if board[i] == "B":
-            value += (i+1) * SINGLE_STEP_VALUE + (i ** 2) + BOARD_VALUES(i)
+            value += (i+1) * SINGLE_STEP_VALUE + (i ** 2) + BOARD_VALUES[i]
         if board[i+4] == "R":
-            value -= (i+1) * SINGLE_STEP_VALUE + (i ** 2) + BOARD_VALUES(i)
+            value -= (i+1) * SINGLE_STEP_VALUE + (i ** 2) + BOARD_VALUES[i]
     #Sared path
     for i in range (8):
         if board[i+8] == "B":
-            value += (i+5) * SINGLE_STEP_VALUE + ((i+8) ** 2) + BOARD_VALUES(i+4)
+            value += (i+5) * SINGLE_STEP_VALUE + ((i+8) ** 2) + BOARD_VALUES[i+4]
         if board[i+8] == "R":
-            value -= (i+5) * SINGLE_STEP_VALUE + ((i+8) ** 2) + BOARD_VALUES(i+4)
+            value -= (i+5) * SINGLE_STEP_VALUE + ((i+8) ** 2) + BOARD_VALUES[i+4]
     #Finish paths
     for i in range (2):
         if board[i+16] == "B":
-            value += (i+13) * SINGLE_STEP_VALUE + ((i+13) ** 2) + BOARD_VALUES(i+12)
+            value += (i+13) * SINGLE_STEP_VALUE + ((i+13) ** 2) + BOARD_VALUES[i+12]
         if board[i+18] == "R":
-            value -= (i+13) * SINGLE_STEP_VALUE + ((i+13) ** 2) + BOARD_VALUES(i+12)      
+            value -= (i+13) * SINGLE_STEP_VALUE + ((i+13) ** 2) + BOARD_VALUES[i+12]      
 
     #Add fixed value for enemy tokens on the board_tiles
     value += ENEMY_TOKENS_VALUE * ((4 - black_tokens_in_home - black_tokens_finished) - (4 - red_tokens_in_home - red_tokens_finished))
