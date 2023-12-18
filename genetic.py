@@ -2,6 +2,7 @@ from ur import board
 import ur_heuristic
 from expectiminimax import EMM
 import random
+import math
 import copy
 
 # Constants
@@ -60,25 +61,21 @@ def mutate(current_population):
         # Mutating HOME_VALUE, FINISH_VALUE, and SINGLE_STEP_VALUE
         if random.random() < MUTATION_RATE:
             individual[0] += random.uniform(-1, 1)  # HOME_VALUE mutation
-            individual[0] = max(0, individual[0])   # Ensure HOME_VALUE is non-negative
 
         if random.random() < MUTATION_RATE:
-            individual[1] += random.uniform(-10, 10)  # FINISH_VALUE mutation
-            individual[1] = max(0, individual[1])     # Ensure FINISH_VALUE is non-negative
+            individual[1] += random.uniform(-50, 50)  # FINISH_VALUE mutation
 
         if random.random() < MUTATION_RATE:
             individual[2] += random.uniform(-0.5, 0.5)  # SINGLE_STEP_VALUE mutation
-            individual[2] = max(0, individual[2])       # Ensure SINGLE_STEP_VALUE is non-negative
 
         # Mutating ENEMY_TOKENS_VALUE
         if random.random() < MUTATION_RATE:
             individual[3] += random.uniform(-5, 5)  # ENEMY_TOKENS_VALUE mutation
-            individual[3] = max(0, individual[3])   # Ensure ENEMY_TOKENS_VALUE is non-negative
 
         # Mutating BOARD_VALUES
         for j in range(len(individual[4])):
             if random.random() < MUTATION_RATE:
-                individual[4][j] += random.uniform(-1, 1)  # BOARD_VALUES mutation
+                individual[4][j] += random.uniform(-10, 10)  # BOARD_VALUES mutation
                 individual[4][j] = max(0, individual[4][j]) # Ensure BOARD_VALUES are non-negative
 
     return current_population
@@ -120,6 +117,20 @@ def genetic_algorithm():
 
     return population
 
+def fight(current_population):
+    winners = []
+    half = int(len(current_population) / 2)
+    for i in range (half):
+        winners.append(play(current_population[i], current_population[i+half]))
+    return winners
+
 # Run the genetic algorithm
 best_population = genetic_algorithm()
-print("Best heuristic values:", best_population[0])
+
+# Get winners
+num_log = int(math.log(POPULATION_SIZE, 2))
+for pop in range (num_log):
+    best_population = fight(best_population)
+
+print("Best individual:")
+print(best_population)
