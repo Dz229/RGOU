@@ -4,10 +4,12 @@ from expectiminimax import EMM
 import random
 import math
 import copy
+import numpy as np
+from numba import jit
 
 # Constants
-POPULATION_SIZE = 1024
-GENERATIONS = 50
+POPULATION_SIZE = 512
+GENERATIONS = 100
 MUTATION_RATE = 0.1
 
 # Initialize the population
@@ -60,28 +62,28 @@ def mutate(current_population):
     for individual in current_population:
         # Mutating HOME_VALUE, FINISH_VALUE, and SINGLE_STEP_VALUE
         if random.random() < MUTATION_RATE:
-            individual[0] += random.uniform(-1, 1)  # HOME_VALUE mutation
+            individual[0] += np.random.normal(0, 1)  # HOME_VALUE mutation
 
         if random.random() < MUTATION_RATE:
-            individual[1] += random.uniform(-50, 50)  # FINISH_VALUE mutation
+            individual[1] += np.random.normal(0, 10)  # FINISH_VALUE mutation
 
         if random.random() < MUTATION_RATE:
-            individual[2] += random.uniform(-0.5, 0.5)  # SINGLE_STEP_VALUE mutation
+            individual[2] += np.random.normal(0, 1)  # SINGLE_STEP_VALUE mutation
 
         # Mutating ENEMY_TOKENS_VALUE
         if random.random() < MUTATION_RATE:
-            individual[3] += random.uniform(-5, 5)  # ENEMY_TOKENS_VALUE mutation
+            individual[3] += np.random.normal(0, 5)  # ENEMY_TOKENS_VALUE mutation
 
         # Mutating BOARD_VALUES
         for j in range(len(individual[4])):
             if random.random() < MUTATION_RATE:
-                individual[4][j] += random.uniform(-10, 10)  # BOARD_VALUES mutation
-                individual[4][j] = max(0, individual[4][j]) # Ensure BOARD_VALUES are non-negative
+                individual[4][j] += np.random.normal(0, 5)  # BOARD_VALUES mutation
 
     return current_population
 
 
 # Genetic Algorithm
+@jit
 def genetic_algorithm():
     population = initialize_population()
 
