@@ -268,7 +268,7 @@ if __name__ == '__main__':
 
         print("================================================================")
         print("Computer has rolled: " + str(b.dices_result))
-        computer_move = EMM(copy.deepcopy(b), 4)
+        computer_move = EMM(copy.deepcopy(b), 12)
         print("Computer move: " + str(computer_move))
         print("================================================================")
         b.move(computer_move)

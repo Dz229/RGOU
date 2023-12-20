@@ -8,7 +8,7 @@ import numpy as np
 from numba import jit
 
 # Constants
-POPULATION_SIZE = 512
+POPULATION_SIZE = 4096
 GENERATIONS = 100
 MUTATION_RATE = 0.1
 
@@ -136,3 +136,10 @@ for pop in range (num_log):
 
 print("Best individual:")
 print(best_population)
+
+# Saving the output to a file named 'output.txt'
+output_text = "Best individual:\n" + str(best_population)
+with open('/mnt/data/output.txt', 'w') as file:
+    file.write(output_text)
+saved_file_path = '/mnt/data/output.txt'
+

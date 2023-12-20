@@ -75,7 +75,7 @@ def calculate(board, black_tokens_in_home, red_tokens_in_home, black_tokens_fini
         if board[i+18] == "R":
             value -= (((i+13) * SINGLE_STEP_VALUE) ** 2) + BOARD_VALUES[i+12]      
 
-    #Add fixed value for enemy tokens on the board_tiles
+    #Add fixed value for token diffrence on the board_tiles
     value += ENEMY_TOKENS_VALUE * ((4 - black_tokens_in_home - black_tokens_finished) - (4 - red_tokens_in_home - red_tokens_finished))
 
     return maxing_player_case(value)
