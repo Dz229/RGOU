@@ -5,7 +5,6 @@ import random
 import math
 import copy
 import numpy as np
-from numba import jit
 
 # Constants
 POPULATION_SIZE = 4096
@@ -83,7 +82,6 @@ def mutate(current_population):
 
 
 # Genetic Algorithm
-@jit
 def genetic_algorithm():
     population = initialize_population()
 
@@ -141,5 +139,5 @@ print(best_population)
 output_text = "Best individual:\n" + str(best_population)
 with open('/mnt/data/output.txt', 'w') as file:
     file.write(output_text)
-saved_file_path = '/mnt/data/output.txt'
+saved_file_path = '/output.txt'
 
