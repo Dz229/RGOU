@@ -2,6 +2,12 @@
 # Python implementation of the Royal Game of Ur #
 #################################################
 
+#################
+# Configuration #
+#################
+PLAYER_STARTS = True
+PLAYER_GUI    = False
+
 ###########
 # Imports #
 ###########
@@ -201,81 +207,162 @@ if __name__ == '__main__':
     elif platform == "win32":
         clear_command = 'cls'
 
+    if PLAYER_STARTS:
+        
+        # Main loop
+        while True:
+            #time.sleep(0.25)
+            # Clear console
+            # os.system(clear_command)
 
-    # Main loop
-    while True:
-        #time.sleep(0.25)
-        # Clear console
-        # os.system(clear_command)
+            # Print and input
+            print ("Player B home:     " + str(b.black_tokens_in_home) + "   Player R home:     " + str(b.red_tokens_in_home))
+            print ("Player B finished: " + str(b.black_tokens_finished) +"   Player R finished: " + str(b.red_tokens_finished))
+            print ("Current player: " + b.current_player)
+            print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))        
+            print(b)
+            
+            #Player turn
+            print("Press any key to roll the dices")
+            input()
+            b.roll()
+            print("Rolled " + str(b.dices_result))
 
-        # Print and input
-        print ("Player B home:     " + str(b.black_tokens_in_home) + "   Player R home:     " + str(b.red_tokens_in_home))
-        print ("Player B finished: " + str(b.black_tokens_finished) +"   Player R finished: " + str(b.red_tokens_finished))
-        print ("Current player: " + b.current_player)
-        print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))        
-        print(b)
-        print("Press any key to roll the dices")
-        input()
-        b.roll()
-        print("Rolled " + str(b.dices_result))
+            # Check for possible moves
+            if b.dices_result != 0:
+                no_moves = False
+                possible_moves = b.get_moves()
+                if possible_moves == []:
+                    b.change_player()
+                    no_moves = True
+                print("Possible moves: " + str(possible_moves))
+            
+            # Make move
+            if b.dices_result !=0 and no_moves == False:
+                while True:
+                    try:
+                        move = int(input("Your move: "))
+                        if b.move(move):
+                            break
+                        else:
+                            print("Wrong move: ")
+                    except ValueError:
+                        print("Wrong input, please try again")
+            else:
+                print("Skipping to cpomputers turn...")
+            
+            # Check for winner
+            if b.check_for_winner() != None:
+                print(str(b.check_for_winner()) + " has won!")
+                print(b)
+                print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))
+                break
+            
+            #Computer turn
+            b.roll()
+            if b.dices_result == 0: 
+                print("================================================================")
+                print("Computer rolled 0, skiping turn...")
+                print("================================================================")
+                continue
 
-        # Check for possible moves
-        if b.dices_result != 0:
-            no_moves = False
+            # Check for possible moves
             possible_moves = b.get_moves()
             if possible_moves == []:
                 b.change_player()
-                no_moves = True
-            print("Possible moves: " + str(possible_moves))
-        
-        # Make move
-        if b.dices_result !=0 and no_moves == False:
-            while True:
-                try:
-                    move = int(input("Your move: "))
-                    if b.move(move):
-                        break
-                    else:
-                        print("Wrong move: ")
-                except ValueError:
-                    print("Wrong input, please try again")
-        else:
-            print("Skipping to cpomputers turn...")
-        
-        # Check for winner
-        if b.check_for_winner() != None:
-            print(str(b.check_for_winner()) + " has won!")
-            print(b)
-            print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))
-            break
-        
-        #Computer turn
-        b.roll()
-        if b.dices_result == 0: 
-            print("================================================================")
-            print("Computer rolled 0, skiping turn...")
-            print("================================================================")
-            continue
+                print("================================================================")
+                print("Computer has no possible moves, skiping turn...")
+                print("================================================================")
+                continue
 
-        # Check for possible moves
-        possible_moves = b.get_moves()
-        if possible_moves == []:
-            b.change_player()
             print("================================================================")
-            print("Computer has no possible moves, skiping turn...")
+            print("Computer has rolled: " + str(b.dices_result))
+            computer_move = EMM(copy.deepcopy(b), 4)
+            print("Computer move: " + str(computer_move))
             print("================================================================")
-            continue
-
-        print("================================================================")
-        print("Computer has rolled: " + str(b.dices_result))
-        computer_move = EMM(copy.deepcopy(b), 12)
-        print("Computer move: " + str(computer_move))
-        print("================================================================")
-        b.move(computer_move)
-        
-        # Check for winner
-        if b.check_for_winner() != None:
-            print(str(b.check_for_winner()) + " has won!")
+            b.move(computer_move)
+            
+            # Check for winner
+            if b.check_for_winner() != None:
+                print(str(b.check_for_winner()) + " has won!")
+                print(b)
+                print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))
+                break
+            
+    else:
+        # Main loop
+        while True:
+            #time.sleep(0.25)
+            # Clear console
+            # os.system(clear_command)
+            #Computer turn
+            b.roll()
+            if b.dices_result == 0: 
+                print("================================================================")
+                print("Computer rolled 0, skiping turn...")
+                print("================================================================")
+            else:
+                # Check for possible moves
+                possible_moves = b.get_moves()
+                if possible_moves == []:
+                    b.change_player()
+                    print("================================================================")
+                    print("Computer has no possible moves, skiping turn...")
+                    print("================================================================")
+                else:
+                    print("================================================================")
+                    print("Computer has rolled: " + str(b.dices_result))
+                    computer_move = EMM(copy.deepcopy(b), 24)
+                    print("Computer move: " + str(computer_move))
+                    print("================================================================")
+                    b.move(computer_move)
+            
+            # Check for winner
+            if b.check_for_winner() != None:
+                print(str(b.check_for_winner()) + " has won!")
+                print(b)
+                print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))
+                break
+            
+            # Print and input
+            print ("Player B home:     " + str(b.black_tokens_in_home) + "   Player R home:     " + str(b.red_tokens_in_home))
+            print ("Player B finished: " + str(b.black_tokens_finished) +"   Player R finished: " + str(b.red_tokens_finished))
+            print ("Current player: " + b.current_player)
+            print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))        
             print(b)
-            print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))
-            break
+            
+            #Player turn
+            print("Press any key to roll the dices")
+            input()
+            b.roll()
+            print("Rolled " + str(b.dices_result))
+
+            # Check for possible moves
+            if b.dices_result != 0:
+                no_moves = False
+                possible_moves = b.get_moves()
+                if possible_moves == []:
+                    b.change_player()
+                    no_moves = True
+                print("Possible moves: " + str(possible_moves))
+            
+            # Make move
+            if b.dices_result !=0 and no_moves == False:
+                while True:
+                    try:
+                        move = int(input("Your move: "))
+                        if b.move(move):
+                            break
+                        else:
+                            print("Wrong move: ")
+                    except ValueError:
+                        print("Wrong input, please try again")
+            else:
+                print("Skipping to cpomputers turn...")
+            
+            # Check for winner
+            if b.check_for_winner() != None:
+                print(str(b.check_for_winner()) + " has won!")
+                print(b)
+                print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))
+                break

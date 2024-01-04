@@ -10,12 +10,16 @@ import copy
 # "Optimal strategy in games with chance nodes." 
 # Acta Cybernetica 18.2 (2007): 171-192.
 
+NUMBER_OF_VISITED_STATES = 0
+
 def EMM (board, depth):
+    global NUMBER_OF_VISITED_STATES
+    NUMBER_OF_VISITED_STATES = 0
     # Get possible moves
     possible_moves = board.get_moves()
     
     # Return -1 if there is no possible move
-    if possible_moves ==[]:
+    if possible_moves == []:
         return -1
     
     # Iterate trough children and select best move based on value
@@ -51,6 +55,8 @@ def EMM (board, depth):
             best_move = move
         #print(f"Move {move}: {child_value}")
     
+    #print(f"Visited states: {NUMBER_OF_VISITED_STATES}")
+    
     # Return best move
     if best_move not in possible_moves:
         return possible_moves[0]
@@ -62,7 +68,7 @@ def chance_node(board, depth):
     rolls   = [0, 1, 2, 3, 4]
     for roll in rolls:
         child = copy.deepcopy(board)
-        child.dices_result = rolls
+        child.dices_result = roll
         try:
             value += chances[roll] * EMM_ALG(child, depth, roll)
         except Exception:
@@ -70,13 +76,16 @@ def chance_node(board, depth):
     return value
 
 def EMM_ALG(board, depth, roll):
+    global NUMBER_OF_VISITED_STATES
+    NUMBER_OF_VISITED_STATES += 1
+
     # If node is a leaf, return the value
-    if depth == 0 or board.check_for_winner != None:
+    if depth == 0 or board.check_for_winner() != None:
         return calculate(board.board_tiles, board.black_tokens_in_home, board.red_tokens_in_home, board.black_tokens_finished, board.red_tokens_finished, board.starting_tokens)
     
     # Get the possible moves
     possible_moves = board.get_moves()
-        
+  
     if roll == 0 or possible_moves == []:
         child = copy.deepcopy(board)
         child.change_player()

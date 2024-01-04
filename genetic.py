@@ -7,9 +7,10 @@ import copy
 import numpy as np
 
 # Constants
-POPULATION_SIZE = 4096
-GENERATIONS = 100
+POPULATION_SIZE = 8
+GENERATIONS = 2
 MUTATION_RATE = 0.1
+DEPTH = 2
 
 # Initialize the population
 def initialize_population():
@@ -32,7 +33,7 @@ def play(black_values, red_values):
             b.change_player()
             can_move = False
         if can_move:
-            computer_move = EMM(copy.deepcopy(b), 4)
+            computer_move = EMM(copy.deepcopy(b), DEPTH)
             b.move(computer_move)
         if b.check_for_winner() != None:
             break
@@ -46,7 +47,7 @@ def play(black_values, red_values):
         if possible_moves == []:
             b.change_player()
             continue
-        computer_move = EMM(copy.deepcopy(b), 4)
+        computer_move = EMM(copy.deepcopy(b), DEPTH)
         b.move(computer_move)
         if b.check_for_winner() != None:
             break
@@ -114,6 +115,19 @@ def genetic_algorithm():
 
         # Mutate the new population
         population = mutate(new_population)
+        
+        # Get the avarage of current population
+        avg_home_value = sum(individual[0] for individual in population) / len(population)
+        avg_finish_value = sum(individual[1] for individual in population) / len(population)
+        avg_single_step_value = sum(individual[2] for individual in population) / len(population)
+        avg_enemy_tokens_value = sum(individual[3] for individual in population) / len(population)
+        avg_board_values = [sum(individual[4][i] for individual in population) / len(population) for i in range(14)]
+        avg = [avg_home_value, avg_finish_value, avg_single_step_value, avg_enemy_tokens_value, avg_board_values]
+        
+        # Save the results
+        output_text_avg = f"{generation}: " + str(avg) + "\n"
+        with open('output/avarage.txt', 'a') as file:
+            file.write(output_text_avg)
 
     return population
 
@@ -137,7 +151,7 @@ print(best_population)
 
 # Saving the output to a file named 'output.txt'
 output_text = "Best individual:\n" + str(best_population)
-with open('/mnt/data/output.txt', 'w') as file:
+with open('output/best.txt', 'w') as file:
     file.write(output_text)
-saved_file_path = '/output.txt'
+saved_file_path = 'output/best.txt'
 
