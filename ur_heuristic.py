@@ -12,24 +12,24 @@ MAX_PLAYER = "B"
 # ENEMY_TOKENS_VALUE = 100 
 # BOARD_VALUES       = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 
-HOME_VALUE         = -4.128433618395771
-FINISH_VALUE       = 102.18014765213418
-SINGLE_STEP_VALUE  = 6.543085276498809
-ENEMY_TOKENS_VALUE = -2.0328875142813994
-BOARD_VALUES       = [253.56061761521008, 
-                      -9.920586120478578, 
-                      428.3131975837492, 
-                      864.2053360730955, 
-                      -488.47822026904373, 
-                      940.6157618349072, 
-                      -217.7753581734005, 
-                      -635.041087517064, 
-                      -354.44843927050493, 
-                      448.4840813603127, 
-                      -614.4365525398391, 
-                      436.5258869485654, 
-                      531.1379612348229, 
-                      -180.87790927694297]
+HOME_VALUE         = -1.8850861019751801
+FINISH_VALUE       = 92.74610962674711
+SINGLE_STEP_VALUE  = 4.668100982513829
+ENEMY_TOKENS_VALUE = -4.296115903271434
+BOARD_VALUES       = [-62.26471323294646, 
+                      217.04928447366996, 
+                      399.96197726312744, 
+                      291.9830116589317, 
+                      39.896610293852284, 
+                      -293.67706162031425, 
+                      211.26242460008632, 
+                      -86.2713459368435, 
+                      19.189287469080618, 
+                      60.53453746976433, 
+                      164.42230512251132, 
+                      11.411840431804649, 
+                      -22.87925683967131, 
+                      82.00112332463466]
 
 #Set the values of heuristic 
 def set_values(home, finish, single, enemy, board_val):
@@ -46,10 +46,10 @@ def calculate(board, black_tokens_in_home, red_tokens_in_home, black_tokens_fini
 
     #If someone has finished
     if black_tokens_finished == starting_tokens:
-        value = ('inf')
+        value = float('inf')
         return maxing_player_case(value)
     if red_tokens_finished == starting_tokens:
-        value = ('-inf')
+        value = float('-inf')
         return maxing_player_case(value)
     
     #Add value from tokens in home and those who finished 

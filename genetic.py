@@ -7,8 +7,8 @@ import copy
 import numpy as np
 
 # Constants
-POPULATION_SIZE = 8
-GENERATIONS = 2
+POPULATION_SIZE = 1024
+GENERATIONS = 100
 MUTATION_RATE = 0.1
 DEPTH = 2
 
