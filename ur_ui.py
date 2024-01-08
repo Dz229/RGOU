@@ -2,6 +2,12 @@
 # Python implementation of the Royal Game of Ur #
 #################################################
 
+#################
+# Configuration #
+#################
+PLAYER_STARTS = True
+PLAYER_GUI    = False
+
 ###########
 # Imports #
 ###########
@@ -13,6 +19,7 @@ import time
 from sys import platform
 from ur_heuristic import calculate
 from expectiminimax import EMM
+import tkinter as tk
 
 ###############
 # Board class #
@@ -185,5 +192,290 @@ class board:
             if copy.deepcopy(self).move(move):
                 possible_moves.append(move)
         return possible_moves
+            
+
+#################
+# Main function #
+#################
+if __name__ == '__main__':
+    # Create board
+    b = board()
     
-    
+    # Check for system
+    clear_command = ''
+    if platform == "linux" or platform == "linux2":
+        clear_command = 'clear'
+    elif platform == "win32":
+        clear_command = 'cls'
+
+    if PLAYER_STARTS:
+        if PLAYER_GUI:
+            # Main loop
+            while True:
+                #time.sleep(0.25)
+                # Clear console
+                # os.system(clear_command)
+
+                # Print and input
+                print ("Player B home:     " + str(b.black_tokens_in_home) + "   Player R home:     " + str(b.red_tokens_in_home))
+                print ("Player B finished: " + str(b.black_tokens_finished) +"   Player R finished: " + str(b.red_tokens_finished))
+                print ("Current player: " + b.current_player)
+                print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))        
+                print(b)
+                
+                #Player turn
+                print("Press any key to roll the dices")
+                input()
+                b.roll()
+                print("Rolled " + str(b.dices_result))
+
+                # Check for possible moves
+                if b.dices_result != 0:
+                    no_moves = False
+                    possible_moves = b.get_moves()
+                    if possible_moves == []:
+                        b.change_player()
+                        no_moves = True
+                    print("Possible moves: " + str(possible_moves))
+                
+                # Make move
+                if b.dices_result !=0 and no_moves == False:
+                    while True:
+                        try:
+                            move = int(input("Your move: "))
+                            if b.move(move):
+                                break
+                            else:
+                                print("Wrong move: ")
+                        except ValueError:
+                            print("Wrong input, please try again")
+                else:
+                    print("Skipping to cpomputers turn...")
+                
+                # Check for winner
+                if b.check_for_winner() != None:
+                    print(str(b.check_for_winner()) + " has won!")
+                    print(b)
+                    print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))
+                    break
+                
+                #Computer turn
+                b.roll()
+                if b.dices_result == 0: 
+                    print("================================================================")
+                    print("Computer rolled 0, skiping turn...")
+                    print("================================================================")
+                    continue
+
+                # Check for possible moves
+                possible_moves = b.get_moves()
+                if possible_moves == []:
+                    b.change_player()
+                    print("================================================================")
+                    print("Computer has no possible moves, skiping turn...")
+                    print("================================================================")
+                    continue
+
+                print("================================================================")
+                print("Computer has rolled: " + str(b.dices_result))
+                computer_move = EMM(copy.deepcopy(b), 4)
+                print("Computer move: " + str(computer_move))
+                print("================================================================")
+                b.move(computer_move)
+                
+                # Check for winner
+                if b.check_for_winner() != None:
+                    print(str(b.check_for_winner()) + " has won!")
+                    print(b)
+                    print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))
+                    break
+        else:
+            
+            #######
+            # GUI #
+            #######
+            def draw_circles(canvas, rect_width, rect_height, circle_radius=30):
+                
+                for i in range(4):
+                    x = [0, 1 * rect_width, 2 * rect_width]
+                    y = i * rect_height
+                    circle_x1 = x[0] + rect_width // 2
+                    circle_x2 = x[1] + rect_width // 2
+                    circle_x3 = x[2] + rect_width // 2
+                    circle_y = y + rect_height // 2
+                    
+                    if b.board_tiles[3 - i] != " ":
+                        canvas.create_oval(circle_x1 - circle_radius, circle_y - circle_radius,
+                                    circle_x1 + circle_radius, circle_y + circle_radius,
+                                    fill="black")
+                    if b.board_tiles[8 + i] == "B":
+                        canvas.create_oval(circle_x2 - circle_radius, circle_y - circle_radius,
+                                    circle_x2 + circle_radius, circle_y + circle_radius,
+                                    fill="black")   
+                    if b.board_tiles[8 + i] == "R":
+                        canvas.create_oval(circle_x2 - circle_radius, circle_y - circle_radius,
+                                    circle_x2 + circle_radius, circle_y + circle_radius,
+                                    fill="red")
+                    if b.board_tiles[7 - i] != " ":
+                        canvas.create_oval(circle_x3 - circle_radius, circle_y - circle_radius,
+                                    circle_x3 + circle_radius, circle_y + circle_radius,
+                                    fill="red")
+                    
+                for i in range(2):
+                    x = rect_width
+                    y = (i + 4) * rect_height
+                    circle_x2 = x + rect_width // 2
+                    circle_y = y + rect_height // 2
+                    
+                    if b.board_tiles[12 + i] == "B":
+                        canvas.create_oval(circle_x2 - circle_radius, circle_y - circle_radius,
+                                    circle_x2 + circle_radius, circle_y + circle_radius,
+                                    fill= "black")
+                    if b.board_tiles[12 + i] == "R":
+                        canvas.create_oval(circle_x2 - circle_radius, circle_y - circle_radius,
+                                    circle_x2 + circle_radius, circle_y + circle_radius,
+                                    fill= "red")
+                        
+                for i in range(2):
+                    x = [0, 1 * rect_width, 2 * rect_width]
+                    y = (i + 6) * rect_height
+                    circle_x1 = x[0] + rect_width // 2
+                    circle_x2 = x[1] + rect_width // 2
+                    circle_x3 = x[2] + rect_width // 2
+                    circle_y = y + rect_height // 2
+
+                    if b.board_tiles[17 - i] != " ":
+                        canvas.create_oval(circle_x1 - circle_radius, circle_y - circle_radius,
+                                    circle_x1 + circle_radius, circle_y + circle_radius,
+                                    fill="black")
+                    if b.board_tiles[14 + i] == "B":
+                        canvas.create_oval(circle_x2 - circle_radius, circle_y - circle_radius,
+                                    circle_x2 + circle_radius, circle_y + circle_radius,
+                                    fill= "black")
+                    if b.board_tiles[14 + i] == "R":
+                        canvas.create_oval(circle_x2 - circle_radius, circle_y - circle_radius,
+                                    circle_x2 + circle_radius, circle_y + circle_radius,
+                                    fill= "red")
+                    if b.board_tiles[19 - i] != " ":
+                        canvas.create_oval(circle_x3 - circle_radius, circle_y - circle_radius,
+                                    circle_x3 + circle_radius, circle_y + circle_radius,
+                                    fill="red")
+                    
+                    
+
+            ###################################################################
+            def get_move_ui():
+                move = entry_field.get()
+                
+                draw_circles(canvas, rect_width, rect_height)
+            ###################################################################
+
+            window = tk.Tk()
+            window.title("Royal Game of Ur")
+            rect_width = 100
+            rect_height = 100
+            display_field = tk.Text(window, height=5, width=40, state=tk.DISABLED) 
+            display_field.pack()
+            canvas = tk.Canvas(window, width=rect_width*3, height=rect_height*8)
+            canvas.pack()
+            for i in range(8):
+                for j in range(3):
+                    if not ((i > 3 and i < 6) and (j != 1)):
+                        x1 = j * rect_width
+                        y1 = i * rect_height
+                        x2 = x1 + rect_width
+                        y2 = y1 + rect_height
+                        canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="white")
+
+            entry_field = tk.Entry(window)
+            entry_field.pack()
+            submit_button = tk.Button(window, text="Make Move", command=get_move_ui)
+            submit_button.pack()
+            ##################################################################
+            b.roll()
+            text="Player B home:    " + str(b.black_tokens_in_home) + "  Player R home:   " + str(b.red_tokens_in_home) +"\nPlayer B finished:" + str(b.black_tokens_finished) +" Player R finished:" + str(b.red_tokens_finished)+"\nCurrent player: " + b.current_player  +"\nRolled " + str(b.dices_result)              
+            display_field.config(state=tk.NORMAL)  
+            display_field.delete(1.0, tk.END)  
+            display_field.insert(tk.END, text)  
+            display_field.config(state=tk.DISABLED)  
+            ##################################################################
+            window.mainloop()
+
+            #######
+    else:
+        # Main loop
+        while True:
+            #time.sleep(0.25)
+            # Clear console
+            # os.system(clear_command)
+            #Computer turn
+            b.roll()
+            if b.dices_result == 0: 
+                print("================================================================")
+                print("Computer rolled 0, skiping turn...")
+                print("================================================================")
+            else:
+                # Check for possible moves
+                possible_moves = b.get_moves()
+                if possible_moves == []:
+                    b.change_player()
+                    print("================================================================")
+                    print("Computer has no possible moves, skiping turn...")
+                    print("================================================================")
+                else:
+                    print("================================================================")
+                    print("Computer has rolled: " + str(b.dices_result))
+                    computer_move = EMM(copy.deepcopy(b), 24)
+                    print("Computer move: " + str(computer_move))
+                    print("================================================================")
+                    b.move(computer_move)
+            
+            # Check for winner
+            if b.check_for_winner() != None:
+                print(str(b.check_for_winner()) + " has won!")
+                print(b)
+                print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))
+                break
+            
+            # Print and input
+            print ("Player B home:     " + str(b.black_tokens_in_home) + "   Player R home:     " + str(b.red_tokens_in_home))
+            print ("Player B finished: " + str(b.black_tokens_finished) +"   Player R finished: " + str(b.red_tokens_finished))
+            print ("Current player: " + b.current_player)
+            print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))        
+            print(b)
+            
+            #Player turn
+            print("Press any key to roll the dices")
+            input()
+            b.roll()
+            print("Rolled " + str(b.dices_result))
+
+            # Check for possible moves
+            if b.dices_result != 0:
+                no_moves = False
+                possible_moves = b.get_moves()
+                if possible_moves == []:
+                    b.change_player()
+                    no_moves = True
+                print("Possible moves: " + str(possible_moves))
+            
+            # Make move
+            if b.dices_result !=0 and no_moves == False:
+                while True:
+                    try:
+                        move = int(input("Your move: "))
+                        if b.move(move):
+                            break
+                        else:
+                            print("Wrong move: ")
+                    except ValueError:
+                        print("Wrong input, please try again")
+            else:
+                print("Skipping to cpomputers turn...")
+            
+            # Check for winner
+            if b.check_for_winner() != None:
+                print(str(b.check_for_winner()) + " has won!")
+                print(b)
+                print("Position value: " + str(calculate(b.board_tiles, b.black_tokens_in_home, b.red_tokens_in_home, b.black_tokens_finished, b.red_tokens_finished, b.starting_tokens)))
+                break
