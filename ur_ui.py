@@ -62,8 +62,8 @@ class board:
         self.dices_result = 0
         for i in range(self.number_of_dices):
             self.dices_result += random.randint(0, 1)
-        if self.dices_result == 0:
-            self.change_player()
+        # if self.dices_result == 0:
+        #     self.change_player()
     
     #This function changes the current player
     def change_player(self):
@@ -294,113 +294,175 @@ if __name__ == '__main__':
             #######
             # GUI #
             #######
-            def draw_circles(canvas, rect_width, rect_height, circle_radius=30):
+            def draw_tokens(canvas, width, height, token_radius=30):
+                # Delete old tokens on the board
+                canvas.delete("token")
                 
+                # Draw tokens on the first 4 rows
                 for i in range(4):
-                    x = [0, 1 * rect_width, 2 * rect_width]
-                    y = i * rect_height
-                    circle_x1 = x[0] + rect_width // 2
-                    circle_x2 = x[1] + rect_width // 2
-                    circle_x3 = x[2] + rect_width // 2
-                    circle_y = y + rect_height // 2
+                    x = [0, 1 * width, 2 * width]
+                    y = i * height
+                    token_x1 = x[0] + width // 2
+                    token_x2 = x[1] + width // 2
+                    token_x3 = x[2] + width // 2
+                    token_y = y + height // 2
                     
                     if b.board_tiles[3 - i] != " ":
-                        canvas.create_oval(circle_x1 - circle_radius, circle_y - circle_radius,
-                                    circle_x1 + circle_radius, circle_y + circle_radius,
-                                    fill="black")
+                        canvas.create_oval(token_x1 - token_radius, token_y - token_radius,
+                                           token_x1 + token_radius, token_y + token_radius,
+                                           fill="black", tags="token")
                     if b.board_tiles[8 + i] == "B":
-                        canvas.create_oval(circle_x2 - circle_radius, circle_y - circle_radius,
-                                    circle_x2 + circle_radius, circle_y + circle_radius,
-                                    fill="black")   
+                        canvas.create_oval(token_x2 - token_radius, token_y - token_radius,
+                                           token_x2 + token_radius, token_y + token_radius,
+                                           fill="black", tags="token")   
                     if b.board_tiles[8 + i] == "R":
-                        canvas.create_oval(circle_x2 - circle_radius, circle_y - circle_radius,
-                                    circle_x2 + circle_radius, circle_y + circle_radius,
-                                    fill="red")
+                        canvas.create_oval(token_x2 - token_radius, token_y - token_radius,
+                                           token_x2 + token_radius, token_y + token_radius,
+                                           fill="red", tags="token")
                     if b.board_tiles[7 - i] != " ":
-                        canvas.create_oval(circle_x3 - circle_radius, circle_y - circle_radius,
-                                    circle_x3 + circle_radius, circle_y + circle_radius,
-                                    fill="red")
+                        canvas.create_oval(token_x3 - token_radius, token_y - token_radius,
+                                           token_x3 + token_radius, token_y + token_radius,
+                                           fill="red", tags="token")
                     
+                # Draw tokens on the next 2 rows
                 for i in range(2):
-                    x = rect_width
-                    y = (i + 4) * rect_height
-                    circle_x2 = x + rect_width // 2
-                    circle_y = y + rect_height // 2
+                    x = width
+                    y = (i + 4) * height
+                    token_x2 = x + width // 2
+                    token_y = y + height // 2
                     
                     if b.board_tiles[12 + i] == "B":
-                        canvas.create_oval(circle_x2 - circle_radius, circle_y - circle_radius,
-                                    circle_x2 + circle_radius, circle_y + circle_radius,
-                                    fill= "black")
+                        canvas.create_oval(token_x2 - token_radius, token_y - token_radius,
+                                           token_x2 + token_radius, token_y + token_radius,
+                                           fill= "black", tags="token")
                     if b.board_tiles[12 + i] == "R":
-                        canvas.create_oval(circle_x2 - circle_radius, circle_y - circle_radius,
-                                    circle_x2 + circle_radius, circle_y + circle_radius,
-                                    fill= "red")
-                        
+                        canvas.create_oval(token_x2 - token_radius, token_y - token_radius,
+                                           token_x2 + token_radius, token_y + token_radius,
+                                           fill= "red", tags="token")
+                    
+                # Draw tokens on the last 2 rows    
                 for i in range(2):
-                    x = [0, 1 * rect_width, 2 * rect_width]
-                    y = (i + 6) * rect_height
-                    circle_x1 = x[0] + rect_width // 2
-                    circle_x2 = x[1] + rect_width // 2
-                    circle_x3 = x[2] + rect_width // 2
-                    circle_y = y + rect_height // 2
+                    x = [0, 1 * width, 2 * width]
+                    y = (i + 6) * height
+                    token_x1 = x[0] + width // 2
+                    token_x2 = x[1] + width // 2
+                    token_x3 = x[2] + width // 2
+                    token_y = y + height // 2
 
                     if b.board_tiles[17 - i] != " ":
-                        canvas.create_oval(circle_x1 - circle_radius, circle_y - circle_radius,
-                                    circle_x1 + circle_radius, circle_y + circle_radius,
-                                    fill="black")
+                        canvas.create_oval(token_x1 - token_radius, token_y - token_radius, 
+                                           token_x1 + token_radius, token_y + token_radius, 
+                                           fill="black", tags="token")
                     if b.board_tiles[14 + i] == "B":
-                        canvas.create_oval(circle_x2 - circle_radius, circle_y - circle_radius,
-                                    circle_x2 + circle_radius, circle_y + circle_radius,
-                                    fill= "black")
+                        canvas.create_oval(token_x2 - token_radius, token_y - token_radius,
+                                           token_x2 + token_radius, token_y + token_radius,
+                                           fill= "black", tags="token")
                     if b.board_tiles[14 + i] == "R":
-                        canvas.create_oval(circle_x2 - circle_radius, circle_y - circle_radius,
-                                    circle_x2 + circle_radius, circle_y + circle_radius,
-                                    fill= "red")
+                        canvas.create_oval(token_x2 - token_radius, token_y - token_radius,
+                                           token_x2 + token_radius, token_y + token_radius,
+                                           fill= "red", tags="token")
                     if b.board_tiles[19 - i] != " ":
-                        canvas.create_oval(circle_x3 - circle_radius, circle_y - circle_radius,
-                                    circle_x3 + circle_radius, circle_y + circle_radius,
-                                    fill="red")
+                        canvas.create_oval(token_x3 - token_radius, token_y - token_radius,
+                                           token_x3 + token_radius, token_y + token_radius,
+                                           fill="red", tags="token")
                     
                     
 
             ###################################################################
             def get_move_ui():
-                move = entry_field.get()
+                # If player rolled 0
+                if b.dices_result == 0:
+                    # Computer turn
+                    b.change_player()
+                    b.roll()
+                    if b.dices_result != 0:
+                        possible_moves = b.get_moves()
+                        if possible_moves == []:
+                            b.change_player()
+                        else:
+                            computer_move = EMM(copy.deepcopy(b), 5)
+                            b.move(computer_move)
+                            
+                # If player rolled between 1 and 4
+                else:
+                    # Player turn
+                    try:
+                        move = int(entry_field.get())
+                        print(move)
+                    except ValueError:
+                            return
+                    possible_moves = b.get_moves()
+                    print(possible_moves)
+                    if possible_moves == []:
+                        b.change_player()
+                    else:
+                        try:
+                            if not b.move(move):
+                                return
+                        except ValueError:
+                            return
+                    # Computer turn    
+                    b.roll()
+                    if b.dices_result != 0:
+                        possible_moves = b.get_moves()
+                        if possible_moves == []:
+                            b.change_player()
+                        else:
+                            computer_move = EMM(copy.deepcopy(b), 4)
+                            b.move(computer_move)
+                    else:
+                        b.change_player()
                 
-                draw_circles(canvas, rect_width, rect_height)
+                # Draw tokens and upadte text field
+                draw_tokens(canvas, width, height)
+                b.roll()
+                text="Player B home:    " + str(b.black_tokens_in_home) + "  Player R home:   " + str(b.red_tokens_in_home) +"\nPlayer B finished:" + str(b.black_tokens_finished) +" Player R finished:" + str(b.red_tokens_finished)+"\nCurrent player: " + b.current_player  +"\nRolled " + str(b.dices_result)              
+                text_field.config(state=tk.NORMAL)  
+                text_field.delete(1.0, tk.END)  
+                text_field.insert(tk.END, text)  
+                text_field.config(state=tk.DISABLED)  
             ###################################################################
 
             window = tk.Tk()
             window.title("Royal Game of Ur")
-            rect_width = 100
-            rect_height = 100
-            display_field = tk.Text(window, height=5, width=40, state=tk.DISABLED) 
-            display_field.pack()
-            canvas = tk.Canvas(window, width=rect_width*3, height=rect_height*8)
+            
+            # Size of each single board field
+            width = 90
+            height = 90
+            
+            # Upper text field 
+            text_field = tk.Text(window, height=5, width=40, state=tk.DISABLED) 
+            text_field.pack()
+            
+            # Create the board fields
+            canvas = tk.Canvas(window, width=width*3, height=height*8)
             canvas.pack()
             for i in range(8):
                 for j in range(3):
                     if not ((i > 3 and i < 6) and (j != 1)):
-                        x1 = j * rect_width
-                        y1 = i * rect_height
-                        x2 = x1 + rect_width
-                        y2 = y1 + rect_height
+                        x1 = j * width
+                        y1 = i * height
+                        x2 = x1 + width
+                        y2 = y1 + height
                         canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="white")
 
+            # Firld to entry move 
             entry_field = tk.Entry(window)
             entry_field.pack()
+            # Submit button
             submit_button = tk.Button(window, text="Make Move", command=get_move_ui)
             submit_button.pack()
             ##################################################################
+            # First turn
             b.roll()
             text="Player B home:    " + str(b.black_tokens_in_home) + "  Player R home:   " + str(b.red_tokens_in_home) +"\nPlayer B finished:" + str(b.black_tokens_finished) +" Player R finished:" + str(b.red_tokens_finished)+"\nCurrent player: " + b.current_player  +"\nRolled " + str(b.dices_result)              
-            display_field.config(state=tk.NORMAL)  
-            display_field.delete(1.0, tk.END)  
-            display_field.insert(tk.END, text)  
-            display_field.config(state=tk.DISABLED)  
+            text_field.config(state=tk.NORMAL)  
+            text_field.delete(1.0, tk.END)  
+            text_field.insert(tk.END, text)  
+            text_field.config(state=tk.DISABLED)  
             ##################################################################
+            # Start the app
             window.mainloop()
-
             #######
     else:
         # Main loop

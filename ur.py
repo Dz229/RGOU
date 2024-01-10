@@ -249,7 +249,7 @@ if __name__ == '__main__':
                     except ValueError:
                         print("Wrong input, please try again")
             else:
-                print("Skipping to cpomputers turn...")
+                print("Skipping to computers turn...")
             
             # Check for winner
             if b.check_for_winner() != None:
@@ -277,7 +277,7 @@ if __name__ == '__main__':
 
             print("================================================================")
             print("Computer has rolled: " + str(b.dices_result))
-            computer_move = EMM(copy.deepcopy(b), 5)
+            computer_move = EMM(copy.deepcopy(b), 2)
             print("Computer move: " + str(computer_move))
             print("================================================================")
             b.move(computer_move)
